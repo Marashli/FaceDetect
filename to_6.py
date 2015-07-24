@@ -48,6 +48,8 @@ while True:
 
             faces_data[i][-2] += int((time.time() % 10000)) - faces_data[i][-1]
             faces_data[i][-1] = int((time.time() % 10000))
+            
+        faces_data[i][-1] = int((time.time() % 10000))
     cv2.imshow("video", frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
