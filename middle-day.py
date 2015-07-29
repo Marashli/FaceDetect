@@ -7,17 +7,16 @@ import random
 cap = cv2.VideoCapture(0)
 cascPath = "haarcascade_frontalface_default.xml"
 
-face_dict = {}
-face_color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+face_time = [0, 0]
 faceCascade = cv2.CascadeClassifier(cascPath)
 
-time_now = (time.time() % 10000)
+time_now_1 = (time.time() % 10000)
+time_now_2 = (time.time() % 10000)
 
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    # Detect faces in the image
     faces = faceCascade.detectMultiScale(
         frame,
         scaleFactor=1.1,
@@ -25,18 +24,21 @@ while True:
         minSize=(30, 30),
         flags = cv2.CASCADE_SCALE_IMAGE
     )
-    if len(faces) < 1:
-        if (time.time() % 10000) - time_now > 1:
-            print('Вы отвернулись!')
-            print('Вы смотрели на доску ', int((time.time() % 10000) - time_now), 'секунд.')
-        time_now = (time.time() % 10000)
-    # print("Found {0} faces!".format(len(faces)))
+
     for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255, 2))
+            if x < 150:
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255, 2))
+                face_time[0] = int((time.time() % 10000)) - int(time_now_1)
+                time_now_1 = time.time() % 10000
+            elif x > 250:
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0, 2))
+                face_time[1] = int((time.time() % 10000)) - int(time_now_2)
+                time_now_2 = time.time() % 10000
+
     cv2.imshow("video", frame)
+    print(face_time)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
 cv2.destroyAllWindows()
-
