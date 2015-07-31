@@ -2,69 +2,80 @@ import cv2
 import time
 import random
 
+conf = open('config.txt', 'w')
 
-cap = cv2.VideoCapture(0)
-faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
-faces_data = []
-time_now = (time.time() % 10000)
-faces_max = 0
+class Detect:
+    cap = cv2.VideoCapture(0)
+    faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
-while True:
-    ret, frame = cap.read()
+    faces_data = []
+    time_now = (time.time() % 10000)
+    faces_max = 0
 
-    faces = faceCascade.detectMultiScale(
-        frame,
-        scaleFactor=1.1,
-        minNeighbors=5,
-        minSize=(30, 30),
-        flags = cv2.CASCADE_SCALE_IMAGE
-    )
-    # print(faces_max)
-    # добавление при необходимости новый элемент в массив
-    if len(faces) > faces_max:
-        while faces_max < len(faces):
-            faces_data.append([0, 0, 0, 0, False, random.randint(0, 255), random.randint(0, 255),
-                               random.randint(0, 255), 0, int((time.time() % 10000))])
-            faces_max += 1
+    while True:
+        ret, frame = cap.read()
 
-    # if len(faces) < 1:
-    #    if (time.time() % 10000) - time_now > 1:
-    #        pass
-    #        print('Ты продержался всго лишь', int((time.time() % 10000) - time_now), 'секунд')
-    #    time_now = (time.time() % 10000)
+        faces = faceCascade.detectMultiScale(
+            frame,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30),
+            flags = cv2.CASCADE_SCALE_IMAGE
+        )
+        # print(faces_max)
+        # добавление при необходимости новый элемент в массив
+        if len(faces) > faces_max:
+            while faces_max < len(faces):
+                faces_data.append([0, 0, 0, 0, False, random.randint(0, 255), random.randint(0, 255),
+                                   random.randint(0, 255), 0, int((time.time() % 10000))])
+                faces_max += 1
 
-    for i in range(len(faces)):
-        # faces_data[i] = list(faces[i])
-        for j in range(4):
-            if not faces_data[i][4]:
-                faces_data[i][j] = faces[i][j]
-    # print("Found {0} faces!".format(len(faces)))
+        # if len(faces) < 1:
+        #    if (time.time() % 10000) - time_now > 1:
+        #        pass
+        #        print('Ты продержался всго лишь', int((time.time() % 10000) - time_now), 'секунд')
+        #    time_now = (time.time() % 10000)
 
-    for i in range(len(faces)):
-        if (abs(faces_data[i][0] - faces[i][0])) < faces_data[i][2] and (abs(faces_data[i][1] - faces[i][1])) < faces_data[i][3]:
+        for i in range(len(faces)):
+            # faces_data[i] = list(faces[i])
+            for j in range(4):
+                if not faces_data[i][4]:
+                    faces_data[i][j] = faces[i][j]
+        # print("Found {0} faces!".format(len(faces)))
 
-            cv2.rectangle(frame,
-                          (faces[i][0], faces[i][1]),
-                          (faces[i][0]+faces[i][2], faces[i][1]+faces[i][3]),
-                          (faces_data[i][-5], faces_data[i][-4], faces_data[i][-3], 2))
+        for i in range(len(faces)):
+            if (abs(faces_data[i][0] - faces[i][0])) < faces_data[i][2] and \
+                            (abs(faces_data[i][1] - faces[i][1])) < faces_data[i][3]:
 
-            faces_data[i][-2] += int((time.time() % 10000)) - faces_data[i][-1]
-            faces_data[i][-1] = int((time.time() % 10000))
-        else:
-            cv2.rectangle(frame, (faces[i][0], faces[i][1]), (faces[i][0]+faces[i][2], faces[i][1]+faces[i][3]),
-                          (0, 0, 255, 2))
-        faces_data[i][-1] = int(time.time() % 10000)
+                cv2.rectangle(frame,
+                              (faces[i][0], faces[i][1]),
+                              (faces[i][0]+faces[i][2], faces[i][1]+faces[i][3]),
+                              (faces_data[i][-5], faces_data[i][-4], faces_data[i][-3], 2))
 
-    cv2.imshow("video", frame)
+                faces_data[i][-2] += int((time.time() % 10000)) - faces_data[i][-1]
+                faces_data[i][-1] = int((time.time() % 10000))
+            else:
+                cv2.rectangle(frame, (faces[i][0], faces[i][1]), (faces[i][0]+faces[i][2], faces[i][1]+faces[i][3]),
+                              (0, 0, 255, 2))
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+            faces_data[i][-1] = int(time.time() % 10000)
+        cv2.imwrite('face.png', frame)
+        cv2.imshow("video", frame)
 
-    for i in range(len(faces_data)):
-        faces_data[i][4] = True
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-    print(faces_data)
+        for i in range(len(faces_data)):
+            faces_data[i][4] = True
+            faces_data[i][-1] = int(time.time() % 10000)
 
-cap.release()
-cv2.destroyAllWindows()
+        print(faces_data)
+
+    conf.write('0 4 76 ' + str(faces_data[0][5]) + ' ' + str(faces_data[0][6]) + ' ' + str(faces_data[0][7]) + ' '
+               + '1 6 43')
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+conf.close()
