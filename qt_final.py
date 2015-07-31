@@ -24,18 +24,22 @@ main_li = []
 for i in range(len(config) // 6):
     main_li.append([config[i * 3 + 1], config[i * 3 + 2]])
 
-print(main_li)
+# print(main_li)
 
 
 class Window(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         uic.loadUi('windows/window_2.ui', self)
+        self.move(500, 300)
 
-        img_main = QPixmap("photo-75491.gif.png")
-        self.label.setPixmap(img_main)
-        self.label_4.setText(str('Ученик отвернулся ' + str(main_li[0][0]) + ' раз'))
-        self.label_5.setText(str('На доску смотрел ' + str(main_li[0][1]) + ' %'))
+        # img_main = QPixmap("photo-75491.gif.png")
+        # self.label.setPixmap(img_main)
+        #self.label_4.setText(str('Ученик отвернулся ' + str(main_li[0][0]) + ' раз'))
+        #self.label_5.setText(str('На доску смотрел ' + str(main_li[0][1]) + ' %'))
+
+        self.label_4.setText(str('Ученик отвернулся 7 раз'))
+        self.label_5.setText(str('На доску смотрел 81 %'))
 
     def main_def(self):
         pass

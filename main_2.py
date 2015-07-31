@@ -2,7 +2,10 @@ import cv2
 import time
 import random
 
-conf = open('config.txt', 'w')
+config = open('config.txt', 'r')
+config = config.read()
+config = config.split()
+# print(config)
 
 
 class Detect:
@@ -13,7 +16,14 @@ class Detect:
     time_now = (time.time() % 10000)
     faces_max = 0
 
+    for i in range(len(config) // 5):
+        faces_data.append([config[5 * i + 0], config[5 * i + 1], config[5 * i + 2], config[5 * i + 3], False,
+                           random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 0,
+                           int((time.time() % 10000))])
+        print(1)
+    # print(faces_data)
     while True:
+        count = 0
         ret, frame = cap.read()
 
         faces = faceCascade.detectMultiScale(
@@ -32,16 +42,18 @@ class Detect:
                                    random.randint(0, 255), 0, int((time.time() % 10000))])
                 faces_max += 1
 
-        for i in range(len(faces)):
-            for j in range(4):
-                if not faces_data[i][4]:
-                    faces_data[i][j] = faces[i][j]
+        # print(faces_data)
+
+        # for i in range(len(faces)):
+        #     for j in range(4):
+        #         if not faces_data[i][4]:
+        #             faces_data[i][j] = faces[i][j]
 
         # print("Found {0} faces!".format(len(faces)))
 
         for i in range(len(faces)):
-            if (abs(faces_data[i][0] - faces[i][0])) < faces_data[i][2] \
-                    and (abs(faces_data[i][1] - faces[i][1])) < faces_data[i][3]:
+            if (abs(int(faces_data[i][0]) - int(faces[i][0]))) < 100 \
+                    and (abs(int(faces_data[i][1]) - int(faces[i][1]))) < 100:
 
                 cv2.rectangle(frame,
                               (faces[i][0], faces[i][1]),
@@ -60,7 +72,6 @@ class Detect:
                 faces_data[i][-2] += int((time.time() % 10000)) - faces_data[i][-1]
                 faces_data[i][-1] = int((time.time() % 10000))
 
-            faces_data[i][-1] = int(time.time() % 10000)
         cv2.imwrite('face.png', frame)
         cv2.imshow("video", frame)
 
@@ -73,10 +84,5 @@ class Detect:
 
         print(faces_data)
 
-    #conf.write('0 4 76 ' + str(faces_data[0][5]) + ' ' + str(faces_data[0][6]) + ' ' + str(faces_data[0][7]) + ' '
-    #          + '1 6 43')
-
     cap.release()
     cv2.destroyAllWindows()
-
-conf.close()
