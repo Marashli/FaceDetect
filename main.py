@@ -55,10 +55,10 @@ class Detect:
                               (0, 0, 255, 2))
 
         # диктант
-        if len(faces) == 0 and len(faces_data) != 0:
-            for i in range(len(faces_data)):
-                faces_data[i][-2] += int((time.time() % 10000)) - faces_data[i][-1]
-                faces_data[i][-1] = int((time.time() % 10000))
+        # if len(faces) == 0 and len(faces_data) != 0:
+        #     for i in range(len(faces_data)):
+        #         faces_data[i][-2] += int((time.time() % 10000)) - faces_data[i][-1]
+        #         faces_data[i][-1] = int((time.time() % 10000))
 
             faces_data[i][-1] = int(time.time() % 10000)
         cv2.imwrite('face.png', frame)
@@ -73,7 +73,7 @@ class Detect:
 
         print(faces_data)
 
-    #conf.write('0 4 76 ' + str(faces_data[0][5]) + ' ' + str(faces_data[0][6]) + ' ' + str(faces_data[0][7]) + ' '
+    # conf.write('0 4 76 ' + str(faces_data[0][5]) + ' ' + str(faces_data[0][6]) + ' ' + str(faces_data[0][7]) + ' '
     #          + '1 6 43')
 
     cap.release()

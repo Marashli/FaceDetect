@@ -17,10 +17,11 @@ class Detect:
     faces_max = 0
 
     for i in range(len(config) // 5):
-        faces_data.append([config[5 * i + 0], config[5 * i + 1], config[5 * i + 2], config[5 * i + 3], False,
+        faces_data.append([int(config[5 * i + 0]), int(config[5 * i + 1]), int(config[5 * i + 2]) - int(config[5 * i + 0]),
+                           int(config[5 * i + 3]) - int(config[5 * i + 1]), False,
                            random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 0,
                            int((time.time() % 10000))])
-        print(1)
+
     # print(faces_data)
     while True:
         count = 0
@@ -43,13 +44,6 @@ class Detect:
                 faces_max += 1
 
         # print(faces_data)
-
-        # for i in range(len(faces)):
-        #     for j in range(4):
-        #         if not faces_data[i][4]:
-        #             faces_data[i][j] = faces[i][j]
-
-        # print("Found {0} faces!".format(len(faces)))
 
         for i in range(len(faces)):
             if (abs(int(faces_data[i][0]) - int(faces[i][0]))) < 100 \
